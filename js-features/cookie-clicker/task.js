@@ -6,20 +6,45 @@ const cookieImg = document.getElementById('cookie'),
                 initialHeight = cookie.style.height,
                     initialWidth = cookie.style.width;
 
-let now = Date.now();
-let diff = 0;
+
+const click = {
+    isFirst: true,
+};
+
 cookieImg.addEventListener('click', function() {
-    diff = Date.now() - now;
+
+    calcClickSpeed(click);
+    changeSizes(cookieImg, '250px', '150px');
+    increaseCounter(clickerCounter);
     
-    console.log(diff);
-    cookieImg.style.width = '250px';
-    cookieImg.style.height = '150px';
-
-    setTimeout(() => {
-        cookieImg.style.width = initialWidth;
-        cookieImg.style.height = initialHeight;
-    }, 100);
-
-    clickerCounter.textContent = Number(clickerCounter.textContent) + 1;
 });
 
+function calcClickSpeed (click) {
+
+    if(click.isFirst) {
+        click.isFirst = false;
+        click.time = Date.now();
+        clickerSpeed.textContent = 'Сделайте еще один клик для высчитывания скорости!';
+    } else {
+        const newClickTime = Date.now();
+        const timeDiff = (newClickTime - click.time) / 1000;
+
+        clickerSpeed.textContent = (1 / timeDiff).toFixed(2);
+    
+        click.time = newClickTime;
+    };
+};
+
+function changeSizes (img, toWidth, toHeight) {
+    img.style.width = toWidth;
+    img.style.height = toHeight;
+
+    setTimeout(() => {
+        img.style.width = initialWidth;
+        img.style.height = initialHeight;
+    }, 100);
+};
+
+function increaseCounter (counter) {
+    counter.textContent = Number(counter.textContent) + 1;
+};
