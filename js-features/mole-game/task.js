@@ -4,9 +4,9 @@ const deadMoleCount = document.getElementById('dead'),
 const holesArray = [];
 
 (function addHoles (holesArray) {
-    const holes = document.getElementById('hole-game');
-
-    for ( let i = 1; i <= holes.childElementCount; i++ ) {
+    const holes = document.getElementsByClassName('hole-game');
+    
+    for ( let i = 1; i <= holes[0].childElementCount; i++ ) {
 
         const hole = document.getElementById(getHole(i));
         
