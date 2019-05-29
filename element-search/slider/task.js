@@ -1,8 +1,8 @@
-const prevArrow = document.querySelectorAll('.slider__arrow').item(0),
-        nextArrow = document.querySelectorAll('.slider__arrow').item(1);
+const arrows = document.querySelector('.slider__arrows');
 
-const sliderDots = [...document.querySelectorAll('.slider__dot')],
-        sliderDotsLength = sliderDots.length;   
+const sliderDotsHolder = document.querySelector('.slider__dots'),
+                sliderDots = [...document.querySelectorAll('.slider__dot')],
+                        sliderDotsLength = sliderDots.length;   
 
 const sliderItemsArr = [...document.querySelectorAll('.slider__item')],
         sliderItemsArrLength = sliderItemsArr.length;
@@ -13,64 +13,56 @@ window.addEventListener('load', () => {
         sliderDots[currentSlide].classList.add('slider__dot_active');
 });
 
-prevArrow.addEventListener('click', () => {
-        prevSlide();
-});
+arrows.addEventListener('click', (e) => {
+        const arrow = e.target.classList;
 
-nextArrow.addEventListener('click', () => {
-        nextSlide();
+        if (arrow.contains('slider__arrow')) {
+                if (arrow.contains('slider__arrow_prev')) {
+                        prevSlide();
+                } else {
+                        nextSlide();
+                }; 
+        };                          
 });
 
 function prevSlide () {
         if (sliderItemsArr[currentSlide].classList.contains('slider__item_active')) {
 
-                sliderItemsArr[currentSlide].classList.remove('slider__item_active');
-                sliderDots[currentSlide].classList.remove('slider__dot_active');
-
+                removeActive();
                 currentSlide--;
-
                 if (currentSlide < 0) currentSlide = sliderItemsArrLength - 1;
-
-                sliderItemsArr[currentSlide].classList.add('slider__item_active');
-                sliderDots[currentSlide].classList.add('slider__dot_active');
+                addActive();
         };
 };
 
 function nextSlide () {
         if (sliderItemsArr[currentSlide].classList.contains('slider__item_active')) {
 
-                sliderItemsArr[currentSlide].classList.remove('slider__item_active');
-                sliderDots[currentSlide].classList.remove('slider__dot_active');
-
+                removeActive();
                 currentSlide++;
-
                 if (currentSlide > sliderItemsArrLength - 1) currentSlide = 0;
-
-                sliderItemsArr[currentSlide].classList.add('slider__item_active');
-                sliderDots[currentSlide].classList.add('slider__dot_active');
+                addActive();
         };
 };
 
-function switchDot () {
-        for (let idx = 0; idx < sliderDotsLength; idx++) {
-
-                const dot = sliderDots[idx];
-        
-                dot.addEventListener('click', () => {
-        
-                        if (!dot.classList.contains('slider__dot_active')) {
+sliderDotsHolder.addEventListener('click', (e) => {
+        const dot = e.target.classList;
+        if (!dot.contains('slider__dot_active') && dot.contains('slider__dot')) {
                 
-                                for ( let i = 0; i < sliderDotsLength; i++ ) {
-                                        sliderItemsArr[currentSlide].classList.remove('slider__item_active');
-                                        sliderDots[i].classList.remove('slider__dot_active');
-                                };
-        
-                                dot.classList.add('slider__dot_active');
-                                currentSlide = idx;
-                                sliderItemsArr[currentSlide].classList.add('slider__item_active');
-                        }; 
-                });
+                removeActive();
+                currentSlide = sliderDots.indexOf(e.target);
+                addActive();
+        }; 
+});
+
+function removeActive() {
+        for ( let i = 0; i < sliderDotsLength; i++ ) {
+                sliderItemsArr[currentSlide].classList.remove('slider__item_active');
+                sliderDots[i].classList.remove('slider__dot_active');
         };
 };
-switchDot();
 
+function addActive() {
+        sliderItemsArr[currentSlide].classList.add('slider__item_active');
+        sliderDots[currentSlide].classList.add('slider__dot_active');
+};
