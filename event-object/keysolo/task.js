@@ -4,6 +4,7 @@ class Game {
     this.wordElement = container.querySelector('.word');
     this.winsElement = container.querySelector('.status__wins');
     this.lossElement = container.querySelector('.status__loss');
+    this.secsElement = container.querySelector('.status__seconds');
 
     this.reset();
 
@@ -21,14 +22,19 @@ class Game {
       TODO:
       Написать обработчик события, который откликается
       на каждый введённый символ.
-      В случае правильного ввода слова вызываем this.success()
+      В случае правильного ввода символа вызываем this.success()
       При неправильном вводе символа - this.fail();
      */
+    document.addEventListener('keyup', (e) => {
+        this.currentSymbol.textContent.toLowerCase() === e.key.toLowerCase() ? this.success() : this.fail();
+    });
   }
 
   success() {
+
     this.currentSymbol.classList.add('symbol_correct');
     this.currentSymbol = this.currentSymbol.nextElementSibling;
+
     if (this.currentSymbol !== null) {
       return;
     }
@@ -36,7 +42,7 @@ class Game {
     if (++this.winsElement.textContent === 10) {
       alert('Победа!');
       this.reset();
-    }
+    };
     this.setNewWord();
   }
 
@@ -44,7 +50,7 @@ class Game {
     if (++this.lossElement.textContent === 5) {
       alert('Вы проиграли!');
       this.reset();
-    }
+    };
     this.setNewWord();
   }
 
@@ -80,11 +86,28 @@ class Game {
           `<span class="symbol ${i === 0 ? 'symbol_current': ''}">${s}</span>`
       )
       .join('');
+
     this.wordElement.innerHTML = html;
-
+    
     this.currentSymbol = this.wordElement.querySelector('.symbol_current');
+    // this.setTimer();
   }
-}
 
-new Game(document.getElementById('game'))
+  // setTimer() {
+  //   const n = this.wordElement.textContent.length;
+  //   this.secsElement.textContent = n;
+     
+  //   let id = setInterval(() => {
+  //     this.secsElement.textContent--;
+
+
+  //     if (Number(this.secsElement.textContent) === 0) {
+  //         clearInterval(id);
+  //         this.fail();
+  //     };
+  //   }, 1000);
+  //}
+};
+
+new Game(document.getElementById('game'));
 
