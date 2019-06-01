@@ -34,7 +34,7 @@ body {
   justify-content: space-around;
   align-items: center;
   color: whitesmoke;
-  font-size: 16px;;
+  font-size: 16px;
 }
 
 .book__control {
@@ -102,6 +102,7 @@ body {
   border: 1px solid whitesmoke;
   border-radius: 50%;
 }
+
 .book {
   font-family: Georgia;
 }
