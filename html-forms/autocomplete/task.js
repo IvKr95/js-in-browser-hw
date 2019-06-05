@@ -27,7 +27,7 @@ class Autocomplete {
       const { target } = e;
       if ( !target.matches( '.autocomplete__item' )) {
         return;
-      }
+      };
 
       const { textContent: text } = target,
         { id: value, index } = target.dataset;
@@ -81,13 +81,21 @@ class Autocomplete {
         value: 'Содержимое атрибута value'
       }
     */
-    return [
-      {
-        text: 'Чубакка',
-        value: '1'
-      }
-    ];
+    const result = [];
+
+    [...this.input.options].filter( opt => {
+        const txt = text.toLowerCase();
+        
+        if (opt.textContent.toLowerCase().includes(txt)) {
+          
+              result.push({
+                text: opt.textContent,
+                value: opt.value
+              });
+        };
+    });
+    return result;
   }
-}
+};
 
 new Autocomplete( document.querySelector( '.autocomplete' ));
