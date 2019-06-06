@@ -5,7 +5,7 @@ class Game {
     this.winsElement = container.querySelector('.status__wins');
     this.lossElement = container.querySelector('.status__loss');
     this.secsElement = container.querySelector('.status__seconds');
-
+    this.timerId = null;
     this.reset();
 
     this.registerEvents();
@@ -26,7 +26,10 @@ class Game {
       При неправильном вводе символа - this.fail();
      */
     document.addEventListener('keyup', (e) => {
-        this.currentSymbol.textContent.toLowerCase() === e.key.toLowerCase() ? this.success() : this.fail();
+        this.currentSymbol.textContent
+          .toLowerCase() === e.key.toLowerCase() ? 
+            this.success() : 
+              this.fail();
     });
   }
 
@@ -56,8 +59,11 @@ class Game {
 
   setNewWord() {
     const word = this.getWord();
-
+    
     this.renderWord(word);
+
+    clearInterval(this.timerId);
+    this.setTimer();
   }
 
   getWord() {
@@ -90,23 +96,38 @@ class Game {
     this.wordElement.innerHTML = html;
     
     this.currentSymbol = this.wordElement.querySelector('.symbol_current');
-    // this.setTimer();
   }
 
-  // setTimer() {
-  //   const n = this.wordElement.textContent.length;
-  //   this.secsElement.textContent = n;
-     
-  //   let id = setInterval(() => {
-  //     this.secsElement.textContent--;
+  setTimer() {
+
+    const n = this.wordElement.textContent.length;
+    this.secsElement.textContent = n;
+    // const now = Date.now();
+    // const delta = now - this.startTime;
+    // const time = n * 1000;
+
+    // // console.log(delta, time)
+    // if (delta === time) {
+    //   console.log('fail')
+    //   this.fail()
+    //   return
+    // } else if (delta < time) {
+    //   this.setTimer()
+    // }
+
+    
+
+    this.timerId = setInterval(() => {
+      this.secsElement.textContent--;
 
 
-  //     if (Number(this.secsElement.textContent) === 0) {
-  //         clearInterval(id);
-  //         this.fail();
-  //     };
-  //   }, 1000);
-  //}
+      if (Number(this.secsElement.textContent) === 0) {
+          clearInterval(this.timerId);
+          this.fail();
+          return;
+      };
+    }, 1000);
+  }
 };
 
 new Game(document.getElementById('game'));
