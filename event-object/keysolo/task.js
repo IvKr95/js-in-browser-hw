@@ -40,7 +40,7 @@ class Game {
 
     if (this.currentSymbol !== null) {
       return;
-    }
+    };
 
     if (++this.winsElement.textContent === 10) {
       alert('Победа!');
@@ -102,33 +102,29 @@ class Game {
 
     const n = this.wordElement.textContent.length;
     this.secsElement.textContent = n;
-    // const now = Date.now();
-    // const delta = now - this.startTime;
-    // const time = n * 1000;
-
-    // // console.log(delta, time)
-    // if (delta === time) {
-    //   console.log('fail')
-    //   this.fail()
-    //   return
-    // } else if (delta < time) {
-    //   this.setTimer()
-    // }
 
     
-
     this.timerId = setInterval(() => {
       this.secsElement.textContent--;
 
-
       if (Number(this.secsElement.textContent) === 0) {
-          clearInterval(this.timerId);
           this.fail();
           return;
       };
     }, 1000);
   }
 };
+
+// Если реализуется какой либо таймер, то нужно завязываться 
+// именно на методы Date, а не на setInterval, т.к. в данном случае 
+// мы имеем дело с асинхронным кодом и гарантии, что например, 
+// setInterval будет срабатывать каждую секунду нет. 
+
+// Поэтому правильнее сделать так:
+// 1. определить конечную дату Date.now() + требуемое количество миллисекунд
+// 2. при каждом срабатывании таймера вычисляем оставшееся количество времени:
+// конечная дата - Date.now()
+// 3. устанавливаем новое значение счетчика и проверяем вышло ли время ну и т.д.
 
 new Game(document.getElementById('game'));
 
