@@ -10,14 +10,14 @@ document.addEventListener('click', function(e) {
 
     if (!target.classList.contains('has-tooltip')) return;
 
-    e.preventDefault();
-
     tooltip.innerHTML = target.title; 
 
     tooltip.style.left = target.offsetLeft + 'px';
     tooltip.style.top = target.getBoundingClientRect().top + target.offsetHeight + 'px';
     
     tooltip.classList.toggle('tooltip_active');
+
+    e.preventDefault();
 });
 
 console.log(tooltip.dataset.position)
