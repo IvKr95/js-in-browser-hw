@@ -1,74 +1,56 @@
 const products = [...document.querySelectorAll('.product')],
         cartBlock = document.querySelector('.cart'),
             cart = cartBlock.querySelector('.cart__products');
+                
 
 for ( const product of products ) {
 
-    const decBtn = product.querySelector('.product__quantity-control_dec'),
-            itemAmount = product.querySelector('.product__quantity-value'),
-                incBtn = product.querySelector('.product__quantity-control_inc'),
-                    addBtn = product.querySelector('.product__add');
+    const btns = {
+        dec: product.querySelector('.product__quantity-control_dec'),
+        inc: product.querySelector('.product__quantity-control_inc'),
+        add: product.querySelector('.product__add'),
+    };
 
-    decBtn.addEventListener('click', () => {
-        if ( +itemAmount.textContent === 1) return;
+    const newItem = {
+        amount: product.querySelector('.product__quantity-value'),
+        id: product.dataset.id,
+        img: product.querySelector('.product__image')
+    }
 
-        itemAmount.textContent--;
+    btns.dec.addEventListener('click', () => {
+        if ( +newItem.amount.textContent === 1) return;
+
+        newItem.amount.textContent--;
     });
 
-    incBtn.addEventListener('click', () => {
-        itemAmount.textContent++;
+    btns.inc.addEventListener('click', () => {
+        newItem.amount.textContent++;
     });
 
-    addBtn.addEventListener('click', () => {
+    btns.add.addEventListener('click', () => {
 
-        const newItemID = product.dataset.id,
-                newItemPic = product.querySelector('.product__image').src;
+        itemsInCart = [...cart.children];
 
-        const itemHTML = `<div class="cart__product" data-id="${newItemID}">
-                            <img class="cart__product-image" src="${newItemPic}">
-                            <div class="cart__product-delete">&times;</div>
-                            <div class="cart__product-count">${itemAmount.textContent}</div>
-                        </div>`;
-
-        const itemsInCart = [...cart.children];
-
-        const productFound = newItemID => {
-
-            return itemsInCart.find( item => {
-
-              return item.dataset.id === newItemID;
-            });
-        };
-
-        if ( productFound(newItemID) === undefined ) {
-
-            cart.insertAdjacentHTML('afterbegin', itemHTML);
+        if ( productFound(newItem.id) === undefined ) {
+            
+            cart.insertAdjacentHTML('afterbegin', getProductHTML(newItem));
             cartBlock.classList.add('cart-active');
+            animate(newItem.img, product, [...cart.children][0]);
 
         } else {
-
             itemsInCart.forEach( item => {
 
-                if (item.dataset.id === newItemID) {
+                if (item.dataset.id === newItem.id) {
+                    
                     const curAmount = item.querySelector('.cart__product-count');
-                    const newItemAmount = +curAmount.textContent + +itemAmount.textContent;
-                    curAmount.textContent = newItemAmount;
-                };
+                    const newItemAmount = +curAmount.textContent + +newItem.amount.textContent;
+                    curAmount.textContent = newItemAmount;  
+                    animate(newItem.img, product, item);
+                };     
             });
         };
-
-        getStored();
-    });
-};
-
-function getStored() {
-    try {
-        localStorage.setItem('cart', JSON.stringify(cart.innerHTML));
-    } catch (e) {
-        if (e == QUOTA_EXCEEDED_ERR) {
-            alert('Превышен лимит');
-        };
-    };
+        saveCart();  
+    });    
 };
 
 cart.addEventListener('click', (e) => {
@@ -80,7 +62,7 @@ cart.addEventListener('click', (e) => {
 
         if (cart.children.length === 0) cartBlock.classList.remove('cart-active');
 
-        getStored();
+        saveCart();
     }
 });
 
@@ -89,3 +71,66 @@ window.addEventListener('load', () => {
 
     if (cart.children.length) cartBlock.classList.add('cart-active');
 });
+
+function getProductHTML(item) {
+    return `<div class="cart__product" data-id="${item.id}">
+                <img class="cart__product-image" src="${item.img.src}">
+                <div class="cart__product-delete">&times;</div>
+                <div class="cart__product-count">${item.amount.textContent}</div>
+            </div>`;
+};
+
+function productFound (newItemID) {
+    return itemsInCart.find( item => {
+      return item.dataset.id === newItemID;
+    });
+};
+
+function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart.innerHTML));
+};
+
+function animate(newItemPic, product, item) {
+    
+    const coords = getCoords(newItemPic, item);
+    const imgCopy = getImgCopy(product, newItemPic);
+
+    let id = setTimeout(function fn() {
+
+        if (parseInt(imgCopy.style.left) < coords.xDiff && parseInt(imgCopy.style.top) > coords.yDiff) {
+            imgCopy.style.top = (parseInt(imgCopy.style.top) + coords.stepY) + 'px';
+            imgCopy.style.left = (parseInt(imgCopy.style.left) + coords.stepX) + 'px';
+
+            setTimeout(fn, 10);
+
+        } else {
+
+            imgCopy.remove();
+        };
+    }, 10);
+};
+
+function getCoords (newItemPic, item) {
+    const productCoords = newItemPic.getBoundingClientRect(),
+            inCartCoords = item.getBoundingClientRect();
+
+    const xDiff = Math.floor(inCartCoords.x - productCoords.x),
+            yDiff = Math.floor(inCartCoords.y - productCoords.y);
+
+    const stepX = Math.floor(xDiff / 15),
+            stepY = Math.floor(yDiff / 15);
+
+    return {xDiff, yDiff, stepX, stepY};
+};
+
+function getImgCopy(product, newItemPic) {
+    const imgCopy = newItemPic.cloneNode(false);
+
+    imgCopy.style.position = 'absolute';
+    imgCopy.style.top = '59px';
+    imgCopy.style.left = '0px';
+
+    product.insertBefore(imgCopy, newItemPic);
+
+    return imgCopy;
+};
