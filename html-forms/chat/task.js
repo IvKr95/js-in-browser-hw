@@ -13,24 +13,31 @@ const botAnswers = [
 ];
 
 chatWidgetSide.addEventListener('click', () => {
-
     chatWidget.classList.add('chat-widget_active');
-
 });
 
-
+let delayID;
 
 chatWidgetInput.addEventListener('keyup', (e) => {
 
     let message = chatWidgetInput.value.trim();
 
     if ((e.key).toLowerCase() === 'enter' && message !== '') {
-
-        addClientMessage(message);
-            addBotMessage();
-                cleanUpInputField(chatWidgetInput);               
+        clearTimeout(delayID);
+            addClientMessage(message);
+                addBotMessage();
+                    cleanUpInputField(chatWidgetInput);
+                        delayID = delayMes();         
     };
 });
+
+function delayMes () {
+    let id = setTimeout(() => {
+        addBotMessage();
+    }, 30000);
+    
+    return id;
+};
 
 function scrollToBottom() {
     const widgetContainer = document.querySelector('.chat-widget__messages-container');
@@ -38,9 +45,10 @@ function scrollToBottom() {
 };
 
 function getTime() {
-    return `${new Date().getHours()}:${new Date().getMinutes() < 10 ? 
-                '0' + new Date().getMinutes() : 
-                    new Date().getMinutes()}`;
+    const hh = new Date().getHours(),
+            mm = new Date().getMinutes();
+
+    return `${hh}:${mm < 10 ? '0' + mm : mm}`;
 };
 
 function getRandomBotAnswer() {
@@ -69,7 +77,6 @@ function addBotMessage() {
         </div>`;
 
     scrollToBottom();
-    setTimeout(addBotMessage, 30000);
 };
 
 function cleanUpInputField(message) {
