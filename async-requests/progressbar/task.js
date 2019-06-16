@@ -12,7 +12,6 @@ form.addEventListener('submit', (e) => {
 
 function fn(e) {
     progress.value += 0.005;
-    console.log(e.type);
 };
 
 function addListeners(xhr) {

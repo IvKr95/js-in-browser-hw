@@ -5,9 +5,19 @@ body {
 .signin {
   display: none;
 }
+
 .signin_active {
   display: block;
 }
+
+.signout {
+  display: none;
+}
+
+.signout_active {
+  display: block;
+}
+
 .control {
   padding: 20px;
   border-radius: 25px;
